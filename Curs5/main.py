@@ -1,40 +1,36 @@
-import requests
-import os
-import time
-from bs4 import BeautifulSoup
+import scrape
 
 
-titles_and_links = open('titles.txt', 'a', encoding='utf-8')
-
-if os.stat('titles.txt').st_size:
-    titles_and_links.truncate(0)
-
-article_list = [1]
-URL = 'https://frsah.ro/index.php/page/'
-
-page_number = 1
-my_dict = {}
-
-while article_list:
-
-    URL = URL + str(page_number)
-    page = requests.get(URL)
-
-    soup = BeautifulSoup(page.content, 'html.parser')
-
-    article_list = soup.find_all(class_='td_module_16 td_module_wrap td-animation-stack')
-
-    print(article_list != [])
-
-    for article in article_list:
-
-        title = article.find('a')['title']
-        link = article.find('a')['href']
-        my_dict.update({title: link})
-        titles_and_links.write(title + "  :  " + link + "\n")
-
-    print(page_number)
-    page_number += 1
+def read_from_file(user_input):
+    while True:
+        if user_input == 'yes':
+            with open('titles.txt', 'r') as file:
+                for line in file.readlines():
+                    print(line)
+            break
+        elif user_input == 'no':
+            print('oke :(')
+            break
+        else:
+            print("Not a valid input")
 
 
-titles_and_links.close()
+def write_to_file(user_write):
+    if user_write == 'yes':
+        print("Proceed to Writing")
+        continue_writing = True
+        with open('titles.txt', 'a') as file:
+            while continue_writing:
+                i = input()
+                if i == '<quit>':
+                    continue_writing = False
+                    break
+                file.write(i + "\n")
+    else:
+        print('oke :(')
+
+
+if __name__ == "__main__":
+    scrape.scrape()
+    read_from_file(input('Whould you like read? \n'))
+    write_to_file(input('Whould you like write? \n'))
